@@ -1,3 +1,4 @@
 pics/*
 Downloads/*
 .env
+__pycache__/flask.cpython-313.pyc
