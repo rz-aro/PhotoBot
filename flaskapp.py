@@ -28,7 +28,7 @@ class User(UserMixin):
         self.id = id
         self.email = email
         self.name = name
-        self.profile_pic = profile_pic  
+        self.profile_pic = profile_pic 
 
 
 app = Flask(__name__)
@@ -70,6 +70,47 @@ conn.commit()
 
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
+@app.route('/assets/<path:filename>')
+def assets(filename):
+    return send_from_directory('assets', filename)
+
+@app.route('/getvotes')
+def get_votes():
+    if not current_user.is_authenticated:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    id = current_user.id
+    c.execute("SELECT voted_images FROM users WHERE id=?", (id,))
+    votes_images = c.fetchone()[0]
+    
+    votes = json.loads(votes_images) if votes_images else []
+    return jsonify({"votes": votes})
+
+@app.route("/vote", methods=['POST'])
+@login_required
+def post_votes():
+    if not current_user.is_authenticated:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    votes = request.json.get('votes', [])
+    if not votes:
+        return jsonify({"error": "No votes provided"}), 400
+
+    print(f"Votes received: {votes}")
+
+    # Update the user's voted status and voted images
+    c.execute('''
+        UPDATE users
+        SET voted = 1,
+            voted_images = ?
+        WHERE id = ?
+    ''', (json.dumps(votes), current_user.id))
+    conn.commit()
+
+    current_user.voted = 1
+    current_user.voted_images = json.dumps(votes)
+
+    return jsonify({"message": "Votes updated successfully", "votes": votes})
 
 @app.route('/')
 def home():
@@ -79,6 +120,17 @@ def home():
     # images = os.listdir(image_folder)
     f = open("captions.pkl", "rb")
     caption_dict = pickle.load(f)
+    id = current_user.id
+    c.execute("SELECT voted_images FROM users WHERE id=?", (id,))
+    votes_images = c.fetchone()[0]
+    votes = json.loads(votes_images) if votes_images else []
+    for item in caption_dict:
+        if item[0] in votes:
+            item.append("voted")
+        else:
+            item.append("not-voted")
+    print(caption_dict)
+
     # shuffle caption_dict
     import random
     random.shuffle(caption_dict)

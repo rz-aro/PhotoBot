@@ -2,312 +2,111 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/macy@2"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        window.onload = () => {
-            lucide.createIcons();
-        }
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        div {
-            display: flex;
-            justify-content: center;
-        }
-
-        /* Responsive styles */
-
-        #macy-container {
-            max-width: 1200px;
-            margin: auto;
-        }
-
-        .macy-item>img {
-            /* width is 15% for screen width */
-            width: 15vw;
-            height: auto;
-            margin-bottom: 24px;
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid #eee;
-        }
-
-        .macy-item>img {
-            transition: transform 0.3s cubic-bezier(.25, .8, .25, 1), box-shadow 0.3s;
-            cursor: pointer;
-        }
-
-
-
-        @media (max-width: 1200px) {
-            #macy-container {
-                max-width: 800px;
-            }
-        }
-
-        @media (max-width: 800px) {
-            #macy-container {
-                max-width: 600px;
-            }
-
-        }
-
-        @media (max-width: 600px) {
-            .macy-item>img {
-                width: 30vw;
-            }
-
-            #macy-container {
-                margin: 0;
-            }
-
-            #sidebar {
-                display: none;
-            }
-
-        }
-        /* #logout-btn, #vote-btn {
-            position: fixed; top: 24px; right: 32px; background: #222; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; font-size: 1rem; cursor: pointer;
-        }
-        #logout-btn:hover, #vote-btn:hover {
-            background: #444;
-        }
-        #vote-btn {
-            left: 32px; right: auto; 
-        }
-         */
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/macy@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="assets/styles.css" />
 </head>
 
 <body style="overflow-x: hidden;">
-    <!-- Loader -->
-    <div id="loader"
-        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgb(0, 0, 0); display: flex; justify-content: center; align-items: center; z-index: 100; transition: opacity 0.6s;">
-        <span style="color: #fff; font-size: 2rem;">Loading...</span>
+  <!-- Loader -->
+  <div id="loader">
+    <img id="loader-img" src="https://emoji.slack-edge.com/T02TGEZQ9/rz/d6476986df6cfc81.png" class="sm:w-24 sm:h-24 w-12 h-12 transition-transform duration-500" style="display: block; margin: auto; border: none; outline: none;" />
+    <script>
+      const loaderImg = document.getElementById('loader-img');
+      let angle = 0;
+      setInterval(() => {
+        angle += 360;
+        loaderImg.style.transform = `rotate(${angle}deg)`;
+      }, 2000);
+    </script>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <!-- Top Logo -->
+    <div class="items-center">
+      <img src="https://emoji.slack-edge.com/T02TGEZQ9/rz/d6476986df6cfc81.png" class="w-8 h-8" />
+    </div>
+    <div class="space-y-4">
+      <!-- Icons -->
+      <ul class="flex flex-col space-y-6 mt-4 text-gray-600">
+        <li class="icon-button relative" onclick="location.reload()">
+          <i data-lucide="refresh-ccw" class="w-5 h-5"></i>
+        </li>
+        <div class="tooltip-container">
+          <li class="icon-button overflow-hidden" id="vote-button" data-current-state="vote">
+            <div id="vote-icon">
+              <i data-lucide="vote" class="w-5 h-5"></i>
+            </div>
+            <div id="check-icon">
+              <i data-lucide="check" class="w-5 h-5"></i>
+            </div>
+          </li>
+        </div>
+      </ul>
     </div>
 
-    <div class="fixed h-screen left-0 w-[60px] bg-white border-r flex-col items-center py-4 justify-between"
-        style="z-index: 70;" id="sidebar">
-
-        <!-- Top Logo -->
-        <div class="items-center">
-            <img src="https://emoji.slack-edge.com/T02TGEZQ9/rz/d6476986df6cfc81.png" class="w-8 h-8" />
-        </div>
-        <div class="space-y-4">
-
-            <!-- Icons -->
-            <ul class="flex flex-col space-y-6 mt-4 text-gray-600">
-                <li class="hover:bg-black hover:text-white p-1 rounded transition-colors duration-800">
-                    <i data-lucide="refresh-ccw" class="w-5 h-5"></i>
-                </li>
-                <li class="hover:bg-black hover:text-white p-1 rounded transition-colors duration-800"><i
-                        data-lucide="vote" class="w-5 h-5"></i></li>
-            </ul>
-        </div>
-
-        <div class="space-y-6 flex flex-col items-center">
-            <!-- <i data-lucide="code" class="w-5 h-5 text-gray-600"></i>
-            <i data-lucide="life-buoy" class="w-5 h-5 text-gray-600"></i> -->
-            <a href="/logout" class="hover:bg-black hover:text-white p-1 rounded transition-colors duration-800"><i
-                    data-lucide="log-out" class="w-5 h-5"></i></a>
-            <img src="{{ profile_pic }}" class="w-8 h-8 rounded-full pficon" />
-        </div>
-        <div class="hidden fixed bottom-[25px] left-[70px] bg-white flex items-center justify-center rounded-[10px] border p-2 profile-card transition-all duration-300 ease-in-out opacity-0 translate-y-4"
-            style="z-index: 50;">
-            <div class="relative">
-                <img src="{{ profile_pic }}" class="w-8 h-8 rounded-full" />
-                <span
-                    class="absolute bottom-0 right-0 block w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
-            </div>
-            <div class="flex-col items-start ml-2">
-                <span class="ml-2 text-sm font-semibold">{{ name }}</span>
-                <span class="ml-2 text-sm text-gray-500">{{ email }}</span>
-            </div>
-        </div>
-        <script>
-            // Animate profile card on hover
-            const pficon = document.getElementsByClassName('pficon')[0];
-            const profileCard = document.getElementsByClassName('profile-card')[0];
-
-            pficon.addEventListener('mouseenter', function () {
-                profileCard.classList.remove('hidden');
-                setTimeout(() => {
-                    profileCard.classList.remove('opacity-0', 'translate-y-4');
-                    profileCard.classList.add('opacity-100', 'translate-y-0');
-                }, 10);
-            });
-
-            pficon.addEventListener('mouseleave', function () {
-                profileCard.classList.remove('opacity-100', 'translate-y-0');
-                profileCard.classList.add('opacity-0', 'translate-y-4');
-                setTimeout(() => {
-                    profileCard.classList.add('hidden');
-                }, 300);
-            });
-        </script>
+    <div class="space-y-6 flex flex-col items-center">
+      <a href="/logout" class="icon-button">
+        <i data-lucide="log-out" class="w-5 h-5"></i>
+      </a>
+      <img src="{{ profile_pic }}" class="w-8 h-8 rounded-full pficon" />
     </div>
-    <div class="ml-0 sm:ml-[60px]">
-        <div id="macy-container" class="z-10 w-screen">
 
-            {% for image in images %}
-            <div class="macy-item">
-                <img src="pics/{{ image[0] }}" alt="Image" data-caption="{{ image[1] }}" data-user="{{ image[2] }}">
-            </div>
-            {% endfor %}
-        </div>
+    <div class="profile-card hidden">
+      <div class="relative">
+        <img src="{{ profile_pic }}" class="w-8 h-8 rounded-full" />
+        <span class="status-indicator"></span>
+      </div>
+      <div class="flex-col items-start ml-2">
+        <span class="ml-2 text-sm font-semibold">{{ name }}</span>
+        <span class="ml-2 text-sm text-gray-500">{{ email }}</span>
+      </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('logout-btn').addEventListener('click', function () {
-                window.location.href = '/logout';
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const loader = document.getElementById('loader');
-            const images = document.querySelectorAll('#macy-container img');
-            let loadedCount = 0;
-            function hideLoader() {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 600);
-            }
-            if (images.length === 0) {
-                hideLoader();
-            }
-            images.forEach(img => {
-                if (img.complete) {
-                    loadedCount++;
-                    if (loadedCount === images.length) hideLoader();
-                } else {
-                    img.addEventListener('load', () => {
-                        loadedCount++;
-                        if (loadedCount === images.length) hideLoader();
-                    });
-                    img.addEventListener('error', () => {
-                        loadedCount++;
-                        if (loadedCount === images.length) hideLoader();
-                    });
-                }
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const macyInstance = Macy({
-                container: '#macy-container',
-                trueOrder: false,
-                waitForImages: false,
-                margin: 15,
-                columns: 5,
-                breakAt: {
-                    1200: {
-                        margin: 10,
-                        columns: 5
-                    },
-                    800: {
-                        margin: 5,
-                        columns: 5
-                    },
-                    600: {
-                        margin: 5,
-                        columns: 3
-                    },
-                }
+  </div>
 
-            });
+  <div class="ml-0 sm:ml-[60px]">
+    <div id="macy-container" class="z-10 w-screen">
+      {% for image in images %}
+      <div class="macy-item">
+        <input type="checkbox" title="Select image" id="{{ image[0] }}" {% if (image[3] == "voted") %}checked{% endif %} />
+        <img for="{{ image[0] }}" class="hovernow" src="pics/{{ image[0] }}" alt="Image" data-caption="{{ image[1] }}"
+          data-user="{{ image[2] }}" data-id="{{ image[0] }}" />
+        <div class="selected-overlay pointer-events-none absolute inset-0 bg-gray-500 bg-opacity-40 rounded-sm"
+          for="{{ image[0] }}"></div>
+        <div class="absolute rounded-full bg-green-500 shadow-lg flex items-center justify-center tick"
+          for="{{ image[0] }}">
+          <svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="Interface / Check_All_Big">
+              <path id="Vector"
+                d="M7 12L11.9497 16.9497L22.5572 6.34326M2.0498 12.0503L6.99955 17M17.606 6.39355L12.3027 11.6969"
+                stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+          </svg>
+        </div>
 
-            const images = document.querySelectorAll('img');
-            images.forEach(img => {
-                img.addEventListener('click', function () {
-                    const src = this.getAttribute('src');
-                    const rect = this.getBoundingClientRect();
-
-                    // Create modal overlay
-                    const modal = document.createElement('div');
-                    modal.style.position = 'fixed';
-                    modal.style.top = '0';
-                    modal.style.left = '0';
-                    modal.style.width = '100%';
-                    modal.style.height = '100%';
-                    modal.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-                    modal.style.display = 'flex';
-                    modal.style.flexDirection = 'column';
-                    modal.style.justifyContent = 'center';
-                    modal.style.alignItems = 'center';
-                    modal.style.transition = 'background-color 0.4s cubic-bezier(.25,.8,.25,1)';
-                    modal.style.zIndex = '99999';
-
-                    // Create animated image
-                    const modalimgdiv = document.createElement('div');
-                    const modalImg = document.createElement('img');
-                    modalImg.src = src;
-                    // modalImg.style.position = 'fixed';
-                    // modalImg.style.left = rect.left + 'px';
-                    // modalImg.style.top = rect.top + 'px';
-                    modalImg.style.opacity = '0';
-                    modalImg.style.width = "auto";
-                    modalImg.style.height = "60vh";
-                    modalImg.style.margin = '0';
-                    modalImg.style.borderRadius = '4px';
-                    modalImg.style.boxShadow = '0 8px 32px rgba(0,0,0,0.25)';
-                    modalImg.style.zIndex = '100000';
-                    modalimgdiv.appendChild(modalImg);
-
-                    // create caption
-                    const caption = document.createElement('div');
-                    caption.style.color = '#eee';
-                    caption.style.fontSize = '1.2rem';
-                    caption.style.textAlign = 'center';
-                    caption.style.opacity = '0';
-                    caption.style.marginTop = '20px';
-                    caption.style.transition = 'opacity 0.4s cubic-bezier(.25,.8,.25,1)';
-                    // replace all emojis in the format :name: with empty string. also replace * and "
-                    caption_text = this.getAttribute('data-caption').replace(/:[a-zA-Z0-9_]+:/g, '').replace(/\*/g, '').replace(/"/g, '');
-                    caption.innerHTML = caption_text + "<br> - " + this.getAttribute('data-user') || 'No caption available';
-                    console.log(this.getAttribute('data-caption'));
-                    modal.appendChild(modalimgdiv);
-                    modal.appendChild(caption);
-
-
-
-                    document.body.appendChild(modal);
-
-                    // Animate overlay background
-                    setTimeout(() => {
-                        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                    }, 10);
-
-                    setTimeout(() => {
-                        modalImg.style.transform = "scale(0.8)";
-                        modalImg.style.transition = 'all 0.4s cubic-bezier(.25,.8,.25,1)';
-                        modalImg.style.opacity = '1';
-                        modalImg.style.transform = "scale(1)";
-                        caption.style.opacity = '1';
-                    }, 10);
-
-
-
-                    // Remove modal on click (with reverse animation)
-                    modal.addEventListener('click', function () {
-                        modal.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-                        modalImg.style.opacity = '0';
-                        setTimeout(() => {
-                            if (modal.parentNode) document.body.removeChild(modal);
-                        }, 400);
-                    });
-                });
-            });
-
-
-        });
-    </script>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="overlay-fortooltip">
+    <div class="tooltip-text">👈 Click here to vote!</div>
+  </div>
+  <div class="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
+    <div id="notification-bar" class="flex items-center gap-3 bg-gray-800 text-gray-200 px-4 py-2 rounded-md shadow-md  opacity-0 pointer-events-none transition-all duration-300 ease-in-out">
+      <div class="bg-blue-700 p-2 rounded-md">
+        <i data-lucide="bell" class="w-4 h-4 text-white"></i>
+      </div>
+      <span class="text-sm" id="notification-message">Set yourself free.</span>
+      <button class="ml-auto text-gray-400 hover:text-gray-200" id="close-notification">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+  <script src="/assets/scripts.js"></script>
 </body>
 
-</html>
+</html>"
