@@ -11,9 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function hideLoader() {
         loader.style.opacity = "0";
-        setTimeout(() => {
-            loader.style.display = "none";
-        }, 600);
     }
 
     if (images.length === 0) hideLoader();
@@ -134,9 +131,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const modalImg = document.createElement("img");
             modalImg.src = src;
             modalImg.style.cssText = `
-        width: auto; height: 60vh; opacity: 0;
-        border-radius: 4px; box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+        opacity: 0;
+        border-radius: 4px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.25);
         transition: all 0.4s cubic-bezier(.25,.8,.25,1);
+        max-width: 90vw;
+        max-height: 70vh;
+        width: auto;
+        height: auto;
+        display: block;
+        margin: 0 auto;
       `;
 
             const caption = document.createElement("div");
@@ -187,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
         votebtn.addEventListener("click", () => {
             viewBool = true;
             if (votebtn.dataset.currentState === "vote") {
-                showNotification("Cast your votes! You can select a maximum of 3 pics.", 10000);
+                showNotification("Cast your votes! You can select a maximum of 3 pics.");
                 voteIcon.classList.add("move");
                 checkIcon.classList.add("move");
                 votebtn.dataset.currentState = "check";
@@ -203,27 +207,47 @@ document.addEventListener("DOMContentLoaded", () => {
                     img.classList.toggle("select-image-checkbox");
                     img.classList.toggle("hovernow");
                 });
-                showNotification("Your votes have been casted successfully!", 3000);
+                showNotification("Your votes have been casted successfully!");
             }
 
         });
     }
     function showNotification(message, duration = 3000) {
         console.log("Notification:", message);
-        const bar = document.getElementById('notification-bar');
-        const msg = document.getElementById('notification-message');
-        msg.textContent = message;
+        const bar = document.createElement('div');
+        bar.className = 'flex items-center gap-3 bg-gray-800 text-gray-200 px-4 py-2 rounded-md shadow-md animate- opacity-0 pointer-events-none transition-all duration-300 ease-in-out';
+        bar.innerHTML = `
+            <div class="bg-blue-700 p-2 rounded-md">
+                <i data-lucide="bell" class="w-4 h-4 text-white"></i>
+            </div>
+            <span class="text-sm" id="notification-message">${message}</span>`;
+        const closenotif = document.createElement('button');
+        closenotif.className = 'ml-auto text-gray-400 hover:text-gray-200';
+        closenotif.innerHTML = `<i data-lucide="x" class="w-4 h-4"></i>`;
+        bar.appendChild(closenotif);
+        const container = document.getElementById('notification-container');
+        container.appendChild(bar);
+
+        // Re-render lucide icons in the newly added notification bar
+        lucide.createIcons();
+
         bar.classList.remove('opacity-0', 'pointer-events-none');
         bar.classList.add('opacity-100');
         setTimeout(() => {
             bar.classList.remove('opacity-100');
             bar.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                bar.remove();
+            }, 300);
+
         }, duration);
 
-        const closenotif = document.getElementById('close-notification');
         closenotif.addEventListener('click', () => {
             bar.classList.remove('opacity-100');
             bar.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                bar.remove();
+            }, 300);
         });
     }
 
@@ -258,4 +282,21 @@ document.addEventListener("DOMContentLoaded", () => {
         tooltip.style.top = voteicon.getBoundingClientRect().top + "px";
     });
 
+    document.getElementById("reload-button").addEventListener("click", () => {
+          // spin the reload icon-button
+          console.log('Reloading...');
+          const reloadButton = document.getElementById('reload-icon');
+          reloadButton.classList.add('animate-spin');
+          setTimeout(() => {
+            reloadButton.classList.remove('animate-spin');
+          }, 1000);
+          location.reload();
+        });
+    
+        window.addEventListener("beforeunload", () => {
+            const loader = document.getElementById("loader");
+            if (loader) {
+                loader.style.opacity = "1";
+            }
+        });
 });

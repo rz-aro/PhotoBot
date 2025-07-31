@@ -13,15 +13,17 @@
 
 <body style="overflow-x: hidden;">
   <!-- Loader -->
-  <div id="loader">
+  <div id="loader" class="pointer-events-none">
     <img id="loader-img" src="https://emoji.slack-edge.com/T02TGEZQ9/rz/d6476986df6cfc81.png" class="sm:w-24 sm:h-24 w-12 h-12 transition-transform duration-500" style="display: block; margin: auto; border: none; outline: none;" />
     <script>
       const loaderImg = document.getElementById('loader-img');
       let angle = 0;
+      angle += 360;
+      loaderImg.style.transform = `rotate(${angle}deg)`;
       setInterval(() => {
         angle += 360;
         loaderImg.style.transform = `rotate(${angle}deg)`;
-      }, 2000);
+      }, 1000);
     </script>
   </div>
 
@@ -33,8 +35,10 @@
     <div class="space-y-4">
       <!-- Icons -->
       <ul class="flex flex-col space-y-6 mt-4 text-gray-600">
-        <li class="icon-button relative" onclick="location.reload()">
-          <i data-lucide="refresh-ccw" class="w-5 h-5"></i>
+        <li class="icon-button relative" id="reload-button">
+          <div id="reload-icon">
+            <i data-lucide="refresh-ccw" class="w-5 h-5"></i>
+          </div>
         </li>
         <div class="tooltip-container">
           <li class="icon-button overflow-hidden" id="vote-button" data-current-state="vote">
@@ -95,16 +99,7 @@
   <div class="overlay-fortooltip">
     <div class="tooltip-text">👈 Click here to vote!</div>
   </div>
-  <div class="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
-    <div id="notification-bar" class="flex items-center gap-3 bg-gray-800 text-gray-200 px-4 py-2 rounded-md shadow-md  opacity-0 pointer-events-none transition-all duration-300 ease-in-out">
-      <div class="bg-blue-700 p-2 rounded-md">
-        <i data-lucide="bell" class="w-4 h-4 text-white"></i>
-      </div>
-      <span class="text-sm" id="notification-message">Set yourself free.</span>
-      <button class="ml-auto text-gray-400 hover:text-gray-200" id="close-notification">
-        <i data-lucide="x" class="w-4 h-4"></i>
-      </button>
-    </div>
+  <div class="fixed top-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center space-y-2" id="notification-container" style="z-index: 100;"></div>
   </div>
   <script src="/assets/scripts.js"></script>
 </body>

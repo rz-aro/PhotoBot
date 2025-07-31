@@ -195,6 +195,16 @@ input[type="checkbox"]{
   font-size: 2rem;
 }
 
+/* Hide all scrollbars */
+body, html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+body::-webkit-scrollbar, html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 /* Media Queries */
 @media (max-width: 1200px) {
   #macy-container {
@@ -212,7 +222,16 @@ input[type="checkbox"]{
   .macy-item > img {
     width: 30vw;
   }
+  img.hovernow:hover {
+    transform: none;
+    box-shadow: none;
+    z-index: auto;
+  }
 
+  .icon-button:hover {
+    background-color: inherit;
+    color: inherit;
+  }
   #macy-container {
     margin: 0;
   }
